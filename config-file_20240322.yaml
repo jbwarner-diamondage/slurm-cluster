@@ -1,0 +1,42 @@
+Region: us-east-1
+Image:
+  Os: alinux2
+HeadNode:
+  InstanceType: m4.4xlarge
+  Networking:
+    SubnetId: subnet-016e1e6f8e430062d
+  Ssh:
+    KeyName: paratus_ed25519
+  Iam:
+    AdditionalIamPolicies:
+      - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      - Policy: arn:aws:iam::aws:policy/AmazonS3FullAccess
+  CustomActions:
+    OnNodeConfigured:
+      Script: s3://nextflow-da-output/install_python39_20240322.sh    
+Scheduling:
+  Scheduler: slurm
+  SlurmQueues:
+  - Name: slurm-queue
+    ComputeResources:
+    - Name: slurmt2
+      Instances:
+      - InstanceType: m4.10xlarge
+      MinCount: 1
+      MaxCount: 10
+    Networking:
+      SubnetIds:
+      - subnet-016e1e6f8e430062d
+    Iam:
+      AdditionalIamPolicies:
+      - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      - Policy: arn:aws:iam::aws:policy/AmazonS3FullAccess
+    CustomActions:
+      OnNodeConfigured:
+        Script: s3://nextflow-da-output/install_python39_20240322.sh
+SharedStorage:
+  - MountDir: /data
+    Name: data
+    StorageType: Efs
+    EfsSettings:
+      DeletionPolicy: Retain
